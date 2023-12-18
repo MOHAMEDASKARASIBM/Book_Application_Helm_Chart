@@ -1,0 +1,119 @@
+#frontend_deployment
+frontend_deployment:
+  name: frontend-deployment
+  replicas: 2
+  app: frontend
+  containers:
+    name: frontend-container
+    image: 888229101819.dkr.ecr.ap-south-1.amazonaws.com/devops_frontend:v1
+    ports: 
+      containerPort: 80
+    env:
+      api: BACKEND_API
+#frontend_service
+frontend_service:
+  name: frontend-service
+  selector:
+    app: frontend
+  type: LoadBalancer
+  ports:
+    port: 80
+    targetPort: 80
+
+#backend_deployment
+backend_deployment:
+  name: backend-deployment
+  app: backend
+  containers:
+    name: backend
+    image: 888229101819.dkr.ecr.ap-south-1.amazonaws.com/devops_backend:v1
+#backend_service
+backend_service:
+  name: backend-service
+  selector:
+    app: backend
+  type: ClusterIP
+  ports:
+    port: 8000
+    targetPort: 8000
+#database_statefulset
+database_statefulset:
+  name:  mongo 
+  replicas: 2
+  containers:
+    image: mongo:4.0.8
+  livenessProbe:
+    initialDelaySeconds: 1
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 2
+  volume:
+    volume_name: mongo-volume
+    mount_path: /data/db
+    awsElasticBlockStore:
+      volumeID: vol-04799ae00843edd7c
+      fsType: ext4
+  nodeSelectorTerms:
+   matchExpressions:
+      key: topology.kubernetes.io/zone
+      operator: In
+      values: ap-south-1a
+  volumeClaimTemplates:
+     accessModes: "ReadWriteOnce"
+     storageClassName: ebs-sc
+     resources:
+        requests:
+            storage: 10Gi
+#database_service
+database_service:
+  name: mongo
+  ports:
+    port: 27017
+    name: database
+  clusterIP: None
+
+#configmaps
+configmap: 
+  name:  application-configmap
+  data:
+    port: "8000"
+    MONGO_URI: "mongodb://mongo-0.mongo:27017/books"
+    BACKEND_API: "backend-service:8000"
+
+#storage_class
+storage:
+   name: ebs-sc
+   provisioner: kubernetes.io/aws-ebs
+   parameters:
+      type: gp2
+      fsType: ext4
+
+#persistant_volumes
+pv:
+  first_name: my-ebs-pv-1
+  second_name: my-ebs-pv-2
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  awsElasticBlockStore:
+    volumeID_1: vol-0731ce18f89fb4f55
+    volumeID_2: vol-0eb4862d4cfe32cb4
+    fsType: ext4
+
+
+#HPA
+HPA:
+  name: backend-hpa
+  scaleTargetRef:
+    name: backend-deployment
+  min: 2
+  max: 5
+  metrics:
+    type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

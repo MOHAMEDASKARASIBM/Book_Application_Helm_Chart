@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.database_statefulset.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.database_statefulset.name }}
+  serviceName: {{ .Values.database_statefulset.name | quote}}
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database_statefulset.name }}
+    spec:
+      containers:
+        - name: {{ .Values.database_statefulset.name }}
+          image: {{ .Values.database_statefulset.containers.image }}
+          args: ["--replSet", "rs0", "--bind_ip_all"]
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: {{ .Values.database_statefulset.livenessProbe.initialDelaySeconds}}
+            periodSeconds: {{ .Values.database_statefulset.livenessProbe.periodSeconds}}
+            timeoutSeconds: {{ .Values.database_statefulset.livenessProbe.timeoutSeconds}}
+            successThreshold: {{ .Values.database_statefulset.livenessProbe.successThreshold}}
+            failureThreshold: {{ .Values.database_statefulset.livenessProbe.failureThreshold}}
+          volumeMounts:
+            - name: {{ .Values.database_statefulset.volume.volume_name }}
+              mountPath: {{ .Values.database_statefulset.volume.mount_path }}
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #       - matchExpressions:
+      #         - key: {{ .Values.database_statefulset.nodeSelectorTerms.matchExpressions.key}}
+      #           operator: {{ .Values.database_statefulset.nodeSelectorTerms.matchExpressions.operator}}
+      #           values: {{ .Values.database_statefulset.nodeSelectorTerms.matchExpressions.values}}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - ap-south-1a
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ .Values.database_statefulset.volume.volume_name }}
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.database_statefulset.volumeClaimTemplates.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.database_statefulset.volumeClaimTemplates.resources.requests.storage }}

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend_deployment.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.backend_deployment.app }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend_deployment.app }} 
+    spec:
+      containers:
+      - name: {{ .Values.backend_deployment.containers.name }} 
+        image: {{ .Values.backend_deployment.containers.image }} 
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 200m 
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              key: port 
+              name:  {{ .Values.configmap.name }}
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              key: MONGO_URI
+              name:  {{ .Values.configmap.name }}
+        # readinessProbe:
+        #     tcpSocket:
+        #       port: 8000
+        #     initialDelaySeconds: 1
+        #     periodSeconds: 10
+        #     timeoutSeconds: 5
+        #     successThreshold: 1
+        #     failureThreshold: 2
+        
