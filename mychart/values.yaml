@@ -5,7 +5,7 @@ frontend_deployment:
   app: frontend
   containers:
     name: frontend-container
-    image: 888229101819.dkr.ecr.ap-south-1.amazonaws.com/devops_frontend:v1
+    image: 888229101819.dkr.ecr.ap-south-1.amazonaws.com/devops_frontend:v2
     ports: 
       containerPort: 80
     env:
@@ -117,3 +117,5 @@ HPA:
       target:
         type: Utilization
         averageUtilization: 70
+# kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
+# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
