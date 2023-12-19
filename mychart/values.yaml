@@ -6,7 +6,7 @@ frontend_deployment:
   containers:
     name: frontend-container
     image: 888229101819.dkr.ecr.ap-south-1.amazonaws.com/devops_frontend
-    frontend_tag: v16
+    frontend_tag: v1
     ports: 
       containerPort: 80
     env:
