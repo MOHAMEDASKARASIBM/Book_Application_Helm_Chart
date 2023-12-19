@@ -1,0 +1,21 @@
+name: Update Helm Chart
+
+on:
+  workflow_run:
+    workflows: ["Build and push image to ECR"]
+    types:
+      - completed
+
+jobs:
+  update-helm-chart:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set run number in values.yaml
+      run: |
+        # Extract the current run number
+        RUN_NUMBER=$(echo ${{ github.run_number }})
+        echo $RUN_NUMBER
