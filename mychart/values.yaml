@@ -16,7 +16,7 @@ frontend_service:
   name: frontend-service
   selector:
     app: frontend
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     port: 80
     targetPort: 80
