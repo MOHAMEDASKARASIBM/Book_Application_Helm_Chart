@@ -9,7 +9,7 @@ spec:
   - host: frontend.dofreshmind.com
     http:
       paths:
-      - path: /
+      - path: /books
         pathType: Prefix
         backend:
           service:
