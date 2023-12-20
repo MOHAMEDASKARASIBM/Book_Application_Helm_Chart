@@ -92,6 +92,7 @@ configmap:
 #storage_class
 storage:
    name: ebs-sc
+   namespace: database 
    provisioner: kubernetes.io/aws-ebs
    parameters:
       type: gp2
@@ -101,6 +102,7 @@ storage:
 pv:
   first_name: my-ebs-pv-1
   second_name: my-ebs-pv-2
+  namespace: database 
   capacity:
     storage: 10Gi
   volumeMode: Filesystem
