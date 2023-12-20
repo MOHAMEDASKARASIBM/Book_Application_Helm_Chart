@@ -102,7 +102,15 @@ pv:
     volumeID_1: vol-0731ce18f89fb4f55
     volumeID_2: vol-0eb4862d4cfe32cb4
     fsType: ext4
-
+#ingress
+ingress:
+  name: application-ingress
+  ingressClassName: nginx
+  host: books.dofreshmind.com
+  backend: 
+    service:
+      name: frontend-service
+      port: 80
 
 #HPA
 HPA:
