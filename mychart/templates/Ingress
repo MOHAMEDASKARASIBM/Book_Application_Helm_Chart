@@ -7,7 +7,7 @@ spec:
   ingressClassName:  {{ .Values.ingress.ingressClassName }}
   rules:
   - host: {{ .Values.ingress.host }}
-    https:
+    http:
       paths:
       - path: /
         pathType: Prefix
