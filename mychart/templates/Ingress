@@ -16,4 +16,18 @@ spec:
             name:  frontend-service
             port:
               number: 80
+      - path: /dashboard
+        pathType: Prefix
+        dashboard:
+          service:
+            name: prometheus-operator-grafana
+            port: 
+              number: 80
+      - path: /argocd
+        pathType: Prefix
+        dashboard:
+          service:
+            name: argocd-server
+            port: 
+              number: 80
 ---
