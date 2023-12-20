@@ -45,6 +45,7 @@ backend_service:
 #database_statefulset
 database_statefulset:
   name:  mongo 
+  namespace: database
   replicas: 2
   containers:
     image: mongo:4.0.8
@@ -74,6 +75,7 @@ database_statefulset:
 #database_service
 database_service:
   name: mongo
+  namespace: database
   ports:
     port: 27017
     name: database
@@ -84,7 +86,7 @@ configmap:
   name:  application-configmap
   data:
     port: "8000"
-    MONGO_URI: "mongodb://mongo-0.mongo:27017/books"
+    MONGO_URI: "mongodb://mongo-0.mongo.database:27017/books"
     BACKEND_API: "backend-service:8000"
 
 #storage_class
