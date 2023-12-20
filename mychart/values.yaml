@@ -28,6 +28,11 @@ backend_deployment:
   containers:
     name: backend
     image: 888229101819.dkr.ecr.ap-south-1.amazonaws.com/devops_backend:v1
+    resources:
+      requests:
+        cpu: 100m
+      limits:
+        cpu: 200m
 #backend_service
 backend_service:
   name: backend-service

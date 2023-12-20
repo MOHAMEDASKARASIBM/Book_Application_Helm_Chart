@@ -16,9 +16,9 @@ spec:
         image: {{ .Values.backend_deployment.containers.image }} 
         resources:
           requests:
-            cpu: 100m
+            cpu: {{ .Values.backend_deployment.containers.resources.requests.cpu }} 
           limits:
-            cpu: 200m 
+            cpu: {{ .Values.backend_deployment.containers.resources.limits.cpu }} 
         env:
         - name: PORT
           valueFrom:
